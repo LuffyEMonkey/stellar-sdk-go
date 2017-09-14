@@ -2,13 +2,15 @@ package horizon
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/stellar/go/support/errors"
 	"github.com/stellar/go/xdr"
 )
 
 func (herr *Error) Error() string {
-	return `Horizon error: "` + herr.Problem.Title + `". Check horizon.Error.Problem for more information.`
+	b, _ := json.Marshal(herr.Problem)
+	return `Horizon error: "` + herr.Problem.Title + `". Check horizon.Error.Problem for more information.:` + strings.Replace(string(b), "\"", "'", -1)
 }
 
 // Envelope extracts the transaction envelope that triggered this error from the

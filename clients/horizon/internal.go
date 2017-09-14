@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"regexp"
 
@@ -15,7 +16,9 @@ var endEvent = regexp.MustCompile("(\r\n|\r|\n){2}")
 
 func decodeResponse(resp *http.Response, object interface{}) (err error) {
 	defer resp.Body.Close()
-	decoder := json.NewDecoder(resp.Body)
+
+	b, _ := ioutil.ReadAll(resp.Body)
+	decoder := json.NewDecoder(bytes.NewReader(b))
 
 	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
 		horizonError := &Error{
@@ -23,7 +26,7 @@ func decodeResponse(resp *http.Response, object interface{}) (err error) {
 		}
 		decodeError := decoder.Decode(&horizonError.Problem)
 		if decodeError != nil {
-			return errors.Wrap(decodeError, "error decoding horizon.Problem")
+			return errors.Wrap(decodeError, "error decoding horizon.Problem: "+string(b))
 		}
 		return horizonError
 	}
