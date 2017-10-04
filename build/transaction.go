@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 
 	"github.com/stellar/go/network"
-	"github.com/stellar/go/xdr"
 	"github.com/stellar/go/support/errors"
+	"github.com/stellar/go/xdr"
 )
 
 // Transaction groups the creation of a new TransactionBuilder with a call
@@ -283,4 +283,11 @@ func (m Sequence) MutateTransaction(o *TransactionBuilder) error {
 // to the pubilic key for the address provided
 func (m SourceAccount) MutateTransaction(o *TransactionBuilder) error {
 	return setAccountId(m.AddressOrSeed, &o.TX.SourceAccount)
+}
+
+// MutateTransaction for TransactionFee sets the transaction's Fee
+func (m TransactionFee) MutateTransaction(o *TransactionBuilder) error {
+	o.TX.Fee = xdr.Uint32(m.Amount * len(o.TX.Operations))
+
+	return nil
 }
