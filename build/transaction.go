@@ -285,8 +285,8 @@ func (m SourceAccount) MutateTransaction(o *TransactionBuilder) error {
 	return setAccountId(m.AddressOrSeed, &o.TX.SourceAccount)
 }
 
-// MutateTransaction for TransactionFee sets the transaction's Fee
-func (m TransactionFee) MutateTransaction(o *TransactionBuilder) error {
+// MutateTransaction for BaseFee sets the base fee
+func (m BaseFee) MutateTransaction(o *TransactionBuilder) error {
 	o.TX.Fee = xdr.Uint32(m.Amount * len(o.TX.Operations))
 
 	return nil

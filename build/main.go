@@ -234,7 +234,7 @@ func (n *Network) ID() [32]byte {
 	return network.ID(n.Passphrase)
 }
 
-// TransactionFee is a mutator capable of setting to set the transaction fee
-type TransactionFee struct {
+// BaseFee is a mutator capable of setting to set the base fee
+type BaseFee struct {
 	Amount int
 }
