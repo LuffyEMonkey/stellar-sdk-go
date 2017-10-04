@@ -29,6 +29,7 @@ type TransactionBuilder struct {
 	TX                *xdr.Transaction
 	NetworkPassphrase string
 	Err               error
+	BaseFee           int
 }
 
 // Mutate applies the provided TransactionMutators to this builder's transaction
@@ -152,8 +153,11 @@ func (m CreateAccountBuilder) MutateTransaction(o *TransactionBuilder) error {
 // MutateTransaction for Defaults sets reasonable defaults on the transaction being built
 func (m Defaults) MutateTransaction(o *TransactionBuilder) error {
 
+	if o.BaseFee == 0 {
+		o.BaseFee = 100 // default base fee
+	}
 	if o.TX.Fee == 0 {
-		o.TX.Fee = xdr.Uint32(100 * len(o.TX.Operations))
+		o.TX.Fee = xdr.Uint32(o.BaseFee * len(o.TX.Operations))
 	}
 
 	if o.NetworkPassphrase == "" {
@@ -287,7 +291,7 @@ func (m SourceAccount) MutateTransaction(o *TransactionBuilder) error {
 
 // MutateTransaction for BaseFee sets the base fee
 func (m BaseFee) MutateTransaction(o *TransactionBuilder) error {
-	o.TX.Fee = xdr.Uint32(m.Amount * len(o.TX.Operations))
+	o.BaseFee = m.Amount
 
 	return nil
 }
