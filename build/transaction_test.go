@@ -30,6 +30,47 @@ var _ = Describe("Transaction Mutators:", func() {
 		})
 	})
 
+	Describe("TransactionBuilder.BaseFee", func() {
+		BeforeEach(func() {
+			subject.Mutate(Payment())
+			mut = Defaults{}
+		})
+		It("sets the fee", func() { Expect(subject.TX.Fee).To(BeEquivalentTo(100)) })
+
+		Context("trying to change the base fee to 333", func() {
+			BeforeEach(func() {
+				subject.BaseFee = 333
+				subject.Mutate(Payment())
+			})
+			It(
+				"sets the fee to 333 * 2",
+				func() { Expect(subject.TX.Fee).To(BeEquivalentTo(333 * 2)) },
+			)
+		})
+	})
+
+	Describe("BaseFee Mutator", func() {
+		BeforeEach(func() {
+			subject.Mutate(BaseFee{Amount: 456}, Defaults{})
+		})
+		It(
+			"sets the base fee to 456",
+			func() { Expect(subject.BaseFee).To(BeEquivalentTo(456)) },
+		)
+
+		Context("on a transaction with 3 operations", func() {
+			BeforeEach(func() {
+				subject.Mutate(Payment())
+				subject.Mutate(Payment())
+				subject.Mutate(Payment())
+			})
+			It(
+				"sets the fee to 456 * 3",
+				func() { Expect(subject.TX.Fee).To(BeEquivalentTo(456 * 3)) },
+			)
+		})
+	})
+
 	Describe("MemoHash", func() {
 		BeforeEach(func() { mut = MemoHash{[32]byte{0x01}} })
 		It("sets a Hash memo on the transaction", func() {
