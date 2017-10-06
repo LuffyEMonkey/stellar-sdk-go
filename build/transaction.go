@@ -150,11 +150,14 @@ func (m CreateAccountBuilder) MutateTransaction(o *TransactionBuilder) error {
 	return m.Err
 }
 
+// DefaultBaseFee is used to calculate the transaction fee by default
+var DefaultBaseFee int = 100
+
 // MutateTransaction for Defaults sets reasonable defaults on the transaction being built
 func (m Defaults) MutateTransaction(o *TransactionBuilder) error {
 
 	if o.BaseFee == 0 {
-		o.BaseFee = 100 // default base fee
+		o.BaseFee = DefaultBaseFee
 	}
 	if o.TX.Fee == 0 {
 		o.TX.Fee = xdr.Uint32(o.BaseFee * len(o.TX.Operations))
