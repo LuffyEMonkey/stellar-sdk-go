@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"github.com/stellar/go/strkey"
 	"github.com/stellar/go/services/horizon/friendbot"
+	"github.com/stellar/go/strkey"
 )
 
 func initFriendbot(app *App) {
@@ -17,6 +17,7 @@ func initFriendbot(app *App) {
 		Secret:    app.config.FriendbotSecret,
 		Submitter: app.submitter,
 		Network:   app.networkPassphrase,
+		BaseFee:   app.config.BaseFee,
 	}
 
 }
