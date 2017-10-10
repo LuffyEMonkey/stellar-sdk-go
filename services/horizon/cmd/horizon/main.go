@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	b "github.com/stellar/go/build"
 	"github.com/stellar/go/services/horizon"
 	hlog "github.com/stellar/go/services/horizon/log"
 )
@@ -49,6 +50,7 @@ func init() {
 	viper.BindEnv("history-retention-count", "HISTORY_RETENTION_COUNT")
 	viper.BindEnv("history-stale-threshold", "HISTORY_STALE_THRESHOLD")
 	viper.BindEnv("skip-cursor-update", "SKIP_CURSOR_UPDATE")
+	viper.BindEnv("basefee", "BASEFEE")
 
 	rootCmd = &cobra.Command{
 		Use:   "horizon",
@@ -161,6 +163,11 @@ func init() {
 		0,
 		"the maximum number of ledgers the history db is allowed to be out of date from the connected stellar-core db before horizon considers history stale",
 	)
+	rootCmd.Flags().Int(
+		"basefee",
+		b.DefaultBaseFee,
+		"base fee of network",
+	)
 
 	rootCmd.AddCommand(dbCmd)
 
@@ -226,5 +233,6 @@ func initConfig() {
 		HistoryRetentionCount:  uint(viper.GetInt("history-retention-count")),
 		StaleThreshold:         uint(viper.GetInt("history-stale-threshold")),
 		SkipCursorUpdate:       viper.GetBool("skip-cursor-update"),
+		BaseFee:                viper.GetInt("basefee"),
 	}
 }

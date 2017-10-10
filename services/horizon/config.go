@@ -40,4 +40,7 @@ type Config struct {
 	// SkipCursorUpdate causes the ingestor to skip reporting the "last imported
 	// ledger" state to stellar-core.
 	SkipCursorUpdate bool
+
+	// BaseFee sets the base fee of network
+	BaseFee int
 }
