@@ -1,7 +1,9 @@
 package horizon
 
 import (
+	"encoding/base64"
 	"net/http"
+	"strings"
 
 	"github.com/stellar/go/services/horizon/internal/db2"
 	"github.com/stellar/go/services/horizon/internal/db2/history"
@@ -10,6 +12,7 @@ import (
 	"github.com/stellar/go/services/horizon/internal/render/sse"
 	"github.com/stellar/go/services/horizon/internal/resource"
 	"github.com/stellar/go/services/horizon/internal/txsub"
+	"github.com/stellar/go/xdr"
 )
 
 // This file contains the actions:
@@ -155,9 +158,35 @@ func (action *TransactionCreateAction) JSON() {
 func (action *TransactionCreateAction) loadTX() {
 	action.ValidateBodyType()
 	action.TX = action.GetString("tx")
+
+	// block inflation operation
+	if action.App.config.InflationAccount.Ed25519 != nil {
+		b64r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(action.TX))
+
+		var tx xdr.TransactionEnvelope
+		_, err := xdr.Unmarshal(b64r, &tx)
+		if err != nil {
+			return
+		}
+
+		if action.App.config.InflationAccount.Equals(tx.Tx.SourceAccount) {
+			return
+		}
+
+		for _, o := range tx.Tx.Operations {
+			if o.Body.Type == xdr.OperationTypeInflation {
+				action.Err = &problem.BadRequest
+				return
+			}
+		}
+	}
 }
 
 func (action *TransactionCreateAction) loadResult() {
+	if action.Result.Err != nil {
+		return
+	}
+
 	submission := action.App.submitter.Submit(action.Ctx, action.TX)
 
 	select {

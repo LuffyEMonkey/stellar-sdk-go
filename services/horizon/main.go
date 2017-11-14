@@ -8,8 +8,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/stellar/go/keypair"
 	"github.com/stellar/go/services/horizon/internal"
 	hlog "github.com/stellar/go/services/horizon/internal/log"
+	"github.com/stellar/go/xdr"
 )
 
 var app *horizon.App
@@ -45,6 +47,7 @@ func init() {
 	viper.BindEnv("history-retention-count", "HISTORY_RETENTION_COUNT")
 	viper.BindEnv("history-stale-threshold", "HISTORY_STALE_THRESHOLD")
 	viper.BindEnv("skip-cursor-update", "SKIP_CURSOR_UPDATE")
+	viper.BindEnv("inflation-account", "INFLATION_ACCOUNT")
 
 	rootCmd = &cobra.Command{
 		Use:   "horizon",
@@ -146,6 +149,12 @@ func init() {
 		"Override the network passphrase",
 	)
 
+	rootCmd.Flags().String(
+		"inflation-account",
+		"",
+		"prevent inflation except this account address",
+	)
+
 	rootCmd.Flags().Uint(
 		"history-retention-count",
 		0,
@@ -204,6 +213,18 @@ func initConfig() {
 		log.Fatal("Invalid TLS config: cert not configured")
 	}
 
+	var inflationAccount xdr.AccountId
+	ia := viper.GetString("inflation-account")
+	if len(ia) > 0 {
+		kp, err := keypair.Parse(ia)
+		if err != nil {
+			log.Fatalf("Could not parse inflation-account: %v", ia)
+		}
+
+		inflationAccount.SetAddress(kp.Address())
+		log.Printf("inflation-account was loaded: %v", inflationAccount.Address())
+	}
+
 	config = horizon.Config{
 		DatabaseURL:            viper.GetString("db-url"),
 		StellarCoreDatabaseURL: viper.GetString("stellar-core-db-url"),
@@ -222,5 +243,6 @@ func initConfig() {
 		HistoryRetentionCount:  uint(viper.GetInt("history-retention-count")),
 		StaleThreshold:         uint(viper.GetInt("history-stale-threshold")),
 		SkipCursorUpdate:       viper.GetBool("skip-cursor-update"),
+		InflationAccount:       inflationAccount,
 	}
 }

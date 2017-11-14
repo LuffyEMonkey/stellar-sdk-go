@@ -3,6 +3,7 @@ package horizon
 import (
 	"github.com/PuerkitoBio/throttled"
 	"github.com/sirupsen/logrus"
+	"github.com/stellar/go/xdr"
 )
 
 // Config is the configuration for horizon.  It get's populated by the
@@ -43,4 +44,7 @@ type Config struct {
 
 	// BaseFee sets the base fee of network
 	BaseFee int
+
+	// InflationAccount only can occur the inflation operation
+	InflationAccount xdr.AccountId
 }
