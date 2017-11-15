@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	b "github.com/stellar/go/build"
 	"github.com/stellar/go/keypair"
 	"github.com/stellar/go/services/horizon/internal"
 	hlog "github.com/stellar/go/services/horizon/internal/log"
@@ -47,6 +48,7 @@ func init() {
 	viper.BindEnv("history-retention-count", "HISTORY_RETENTION_COUNT")
 	viper.BindEnv("history-stale-threshold", "HISTORY_STALE_THRESHOLD")
 	viper.BindEnv("skip-cursor-update", "SKIP_CURSOR_UPDATE")
+	viper.BindEnv("basefee", "BASEFEE")
 	viper.BindEnv("inflation-account", "INFLATION_ACCOUNT")
 
 	rootCmd = &cobra.Command{
@@ -149,6 +151,12 @@ func init() {
 		"Override the network passphrase",
 	)
 
+	rootCmd.Flags().Int(
+		"basefee",
+		b.DefaultBaseFee,
+		"base fee of network",
+	)
+
 	rootCmd.Flags().String(
 		"inflation-account",
 		"",
@@ -243,6 +251,7 @@ func initConfig() {
 		HistoryRetentionCount:  uint(viper.GetInt("history-retention-count")),
 		StaleThreshold:         uint(viper.GetInt("history-stale-threshold")),
 		SkipCursorUpdate:       viper.GetBool("skip-cursor-update"),
+		BaseFee:                viper.GetInt("basefee"),
 		InflationAccount:       inflationAccount,
 	}
 }
