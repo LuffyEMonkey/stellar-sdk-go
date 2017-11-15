@@ -56,6 +56,7 @@ func (bot *Bot) makeTx(address string) (string, error) {
 	defer bot.lock.Unlock()
 
 	tx := Transaction(
+		BaseFee{Amount: bot.BaseFee},
 		SourceAccount{bot.Secret},
 		Sequence{bot.sequence + 1},
 		Network{bot.Network},
@@ -63,7 +64,6 @@ func (bot *Bot) makeTx(address string) (string, error) {
 			Destination{address},
 			NativeAmount{"10000.00"},
 		),
-		BaseFee{Amount: bot.BaseFee},
 	)
 
 	if tx.Err != nil {
