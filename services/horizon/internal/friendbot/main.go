@@ -15,7 +15,7 @@ type Bot struct {
 	Submitter *txsub.System
 	Secret    string
 	Network   string
-	BaseFee   int
+	BaseFee   uint64
 
 	sequence uint64
 	lock     sync.Mutex

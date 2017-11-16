@@ -43,7 +43,7 @@ type Config struct {
 	SkipCursorUpdate bool
 
 	// BaseFee sets the base fee of network
-	BaseFee int
+	BaseFee uint64
 
 	// InflationAccount only can occur the inflation operation
 	InflationAccount xdr.AccountId

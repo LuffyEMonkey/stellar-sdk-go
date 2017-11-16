@@ -151,7 +151,7 @@ func init() {
 		"Override the network passphrase",
 	)
 
-	rootCmd.Flags().Int(
+	rootCmd.Flags().Uint64(
 		"basefee",
 		b.DefaultBaseFee,
 		"base fee of network",
@@ -163,7 +163,7 @@ func init() {
 		"prevent inflation except this account address",
 	)
 
-	rootCmd.Flags().Uint(
+	rootCmd.Flags().Uint64(
 		"history-retention-count",
 		0,
 		"the minimum number of ledgers to maintain within horizon's history tables.  0 signifies an unlimited number of ledgers will be retained",
@@ -251,7 +251,7 @@ func initConfig() {
 		HistoryRetentionCount:  uint(viper.GetInt("history-retention-count")),
 		StaleThreshold:         uint(viper.GetInt("history-stale-threshold")),
 		SkipCursorUpdate:       viper.GetBool("skip-cursor-update"),
-		BaseFee:                viper.GetInt("basefee"),
+		BaseFee:                uint64(viper.GetInt("basefee")),
 		InflationAccount:       inflationAccount,
 	}
 }
