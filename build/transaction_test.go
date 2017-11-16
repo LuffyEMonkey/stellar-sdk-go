@@ -21,7 +21,7 @@ var _ = Describe("Transaction Mutators:", func() {
 			subject.Mutate(Payment())
 			mut = Defaults{}
 		})
-		It("sets the fee", func() { Expect(subject.TX.Fee).To(BeEquivalentTo(100)) })
+		It("sets the fee", func() { Expect(subject.TX.Fee).To(BeEquivalentTo(DefaultBaseFee)) })
 		It("sets the network passphrase", func() { Expect(subject.NetworkPassphrase).To(Equal(DefaultNetwork.Passphrase)) })
 
 		Context("on a transaction with 2 operations", func() {
@@ -35,7 +35,7 @@ var _ = Describe("Transaction Mutators:", func() {
 			subject.Mutate(Payment())
 			mut = Defaults{}
 		})
-		It("sets the fee", func() { Expect(subject.TX.Fee).To(BeEquivalentTo(100)) })
+		It("sets the fee", func() { Expect(subject.TX.Fee).To(BeEquivalentTo(DefaultBaseFee)) })
 
 		Context("trying to change the base fee to 333", func() {
 			BeforeEach(func() {
