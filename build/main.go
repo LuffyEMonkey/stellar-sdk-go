@@ -236,5 +236,5 @@ func (n *Network) ID() [32]byte {
 
 // BaseFee is a mutator capable of setting the base fee
 type BaseFee struct {
-	Amount int
+	Amount uint64
 }
