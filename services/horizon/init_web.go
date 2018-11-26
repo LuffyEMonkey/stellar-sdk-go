@@ -114,7 +114,7 @@ func initWebActions(app *App) {
 	r.Get("/order_book/trades", &OrderBookTradeIndexAction{})
 
 	// Transaction submission API
-	r.Post("/transactions", &TransactionCreateAction{})
+	//r.Post("/transactions", &TransactionCreateAction{})
 	r.Get("/paths", &PathIndexAction{})
 
 	// friendbot
